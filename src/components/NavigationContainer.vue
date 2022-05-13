@@ -1,0 +1,67 @@
+<script>
+import navHeader from './navigationHeader/NavigationHeader.vue'
+import navBar from './navigationbar/NavigationBar.vue'
+import navOperator from './navigationOperrator/NavigationOperator.vue'
+import navController from './NavigationController.vue'
+
+export default {
+  name: 'navContainer',
+  mixins: [navController],
+  components: {
+    navHeader, navBar, navOperator
+  },
+  methods: {
+
+  }
+}
+</script>
+<template>
+  <div>
+    <div class="header">
+      <navHeader @selectBtnClick="selectBtnToggle" :is-selected-mode="isSelectedMode"/>
+      </div>
+    <div class="container">
+      <router-view :is-selected-mode="isSelectedMode" @selectedCount="selectedCount"/>
+    </div>
+    <div class="footer">
+      <navBar @clickType="clickType" />
+    </div>
+    <div v-show="isSelectedMode">
+      <navOperator :container-type="selectedType" :operate-counts="selectedCounts"/>
+    </div>
+  </div>
+</template>
+<style>
+
+.header {
+  position: fixed;
+  width: 100%;
+  top: 0px;
+  box-shadow: 0px 5px 40px rgb(0 0 0 / 80%);
+  height: 3rem;
+  text-align: center;
+  line-height: 3rem;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+}
+.HeaderRight {
+  position: absolute;
+  right: 5px;
+  height: 100%;
+}
+.container {
+  /* position: absolute; */
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  overflow: auto;
+}
+.footer {
+  position: fixed;
+  height: 3rem;
+  width: 100%;
+  bottom: 0px;
+}
+</style>
