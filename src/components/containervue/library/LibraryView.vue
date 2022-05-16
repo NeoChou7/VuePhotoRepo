@@ -34,15 +34,36 @@ export default {
         this.selectedImgs.push(name)
         element.classList.add('deleteClick')
       }
-      // selectCount.innerHTML = `已選取${deleteItems.length}張照片`
+    },
+    deleteAction () {
+      fetchWS.wsDeleteImages(this.selectedImgs).then((data) => {
+        console.log(data)
+        // ws if(刪除成功)
+        // 刪除
+        this.selectedImgs.forEach(element => {
+          let index = this.imgNames.indexOf(element)
+          if (index !== -1) {
+            this.imgNames.splice(index, 1)
+          }
+        })
+        this.selectedImgs = []
+
+        // ws if 刪除失敗
+        // selectBtn.click()
+        // totalNum.innerHTML = `${content.querySelectorAll('.minDiv').length}張照片`
+        // selectCount.innerHTML = `已選取${deleteItems.length}張照片`
+      })
     }
   },
   watch: {
+    imgNames () {
+      this.$emit('totalCounts', this.imgNames.length)
+    },
     isSelectedMode () {
       this.selectedImgs = []
     },
     selectedImgs () {
-      this.$emit('selectedCount', this.selectedImgs.length)
+      this.$emit('selectedCounts', this.selectedImgs.length)
     }
   },
   mounted: function () {
@@ -60,7 +81,7 @@ export default {
 
 <template>
   <div>
-    <div v-for="name in imgNames" :class="'minDiv'" :key="name" >
+    <div v-for="name in imgNames" :class="'minDiv'" :key="name">
       <img
         :src="getFullPath(name)"
         :class="'minImg'"
@@ -68,13 +89,16 @@ export default {
         @click="fullImg"
         :name="name"
       />
-      <div v-show="isSelectedMode"
+      <div
+        v-show="isSelectedMode"
         class="minImg"
         mask
         @touchend="selectImg"
         @click="selectImg"
         :name="name"
-      ><div class="tickImg"></div></div>
+      >
+        <div class="tickImg"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -102,7 +126,7 @@ export default {
   height: 15%;
   bottom: 5px;
   right: 5px;
-  background-image: url("~@/asserts/tickImg.png");
+  background-image: url("~@/assets/tickImg.png");
   background-size: contain;
 }
 </style>

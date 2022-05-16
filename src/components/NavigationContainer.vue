@@ -3,36 +3,58 @@ import navHeader from './navigationHeader/NavigationHeader.vue'
 import navBar from './navigationbar/NavigationBar.vue'
 import navOperator from './navigationOperrator/NavigationOperator.vue'
 import navController from './NavigationController.vue'
-
+import modal from './Modal.vue'
 export default {
   name: 'navContainer',
   mixins: [navController],
   components: {
-    navHeader, navBar, navOperator
+    navHeader,
+    navBar,
+    navOperator,
+    modal
+  },
+  data () {
+    return {
+      isPopup: false
+    }
   },
   methods: {
-
+    clickedTrash () {
+      this.isPopup = true
+    }
   }
 }
 </script>
 <template>
   <div>
     <div class="header">
-      <navHeader @selectBtnClick="selectBtnToggle" :is-selected-mode="isSelectedMode"/>
-      </div>
+      <navHeader
+        @selectBtnClick="selectBtnToggle"
+        :total-counts="totalCounts"
+        :is-selected-mode="isSelectedMode"
+      />
+    </div>
     <div class="container">
-      <router-view :is-selected-mode="isSelectedMode" @selectedCount="selectedCount"/>
+      <router-view ref="container"
+        :is-selected-mode="isSelectedMode"
+        @selectedCounts="setSelectedCount"
+        @totalCounts="setTotalCount"
+      />
     </div>
     <div class="footer">
       <navBar @clickType="clickType" />
     </div>
     <div v-show="isSelectedMode">
-      <navOperator :container-type="selectedType" :operate-counts="selectedCounts"/>
+      <navOperator
+        :container-type="selectedType"
+        :operate-counts="selectedCounts"
+        @clickedTrash="clickedTrash"
+      />
     </div>
+    <modal v-show="isPopup"  @clickedOption="clickedOption" />
   </div>
 </template>
 <style>
-
 .header {
   position: fixed;
   width: 100%;
@@ -64,4 +86,5 @@ export default {
   width: 100%;
   bottom: 0px;
 }
+
 </style>

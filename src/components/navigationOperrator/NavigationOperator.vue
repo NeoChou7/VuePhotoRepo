@@ -1,4 +1,5 @@
 <script>
+
 export default{
   name: 'navOperator',
   props: {
@@ -28,6 +29,11 @@ export default{
       }
       return name
     }
+  },
+  methods: {
+    PopTrashDialog () {
+      this.$emit('clickedTrash')
+    }
   }
 
 }
@@ -36,7 +42,7 @@ export default{
   <div class='selectItems'>
     <span id="selectCount">已選取{{operateCounts}}張{{typeName}}</span>
     <i class="fa-solid fa-cloud-arrow-down export"></i>
-    <i id='trashCanBtn' class="fa-solid fa-trash trashcan"></i>
+    <i id='trashCanBtn' class="fa-solid fa-trash trashcan" @click="PopTrashDialog"></i>
   </div>
 </template>
 <style scoped>

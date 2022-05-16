@@ -11,7 +11,7 @@ export default {
     isSelectedMode: {
       type: Boolean
     },
-    photoCounts: {
+    totalCounts: {
       type: Number,
       default: 0
     }
@@ -38,7 +38,7 @@ export default {
 <template>
 <div>
     <div>
-      <span id="totalNum">總共XX張</span>
+      <span id="totalNum">總共{{totalCounts}}張</span>
     </div>
     <div class="HeaderRight">
       <button id="selectBtn" @click="selectBtnClick">{{selectBtnTitle}}</button>

@@ -10,7 +10,7 @@ function wsGetImages (fromName) {
 }
 
 function wsDeleteImages (names) {
-  const deletePath = this.$serverHostPath + '/delete'
+  const deletePath = serverHostPath + '/delete'
 
   return fetch(deletePath, {
     headers: {
@@ -24,7 +24,7 @@ function wsDeleteImages (names) {
 }
 
 function wsGetImage (imgName) {
-  const imagePath = this.$serverHostPath + '/image/' + imgName
+  const imagePath = serverHostPath + '/image/' + imgName
   return fetch(imagePath)
     .then(function (response) {
       return response.arrayBuffer()
@@ -39,7 +39,7 @@ function wsGetImage (imgName) {
 }
 
 function wsGetXSImage (imgName) {
-  const imagePath = this.$serverHostPath + '/image-xs/' + imgName
+  const imagePath = serverHostPath + '/image-xs/' + imgName
   return fetch(imagePath)
     .then(function (response) {
       return response.arrayBuffer()
@@ -65,7 +65,7 @@ function wsFileUpload (files) {
   var data = new FormData()
   Array.from(files).forEach((name) => data.append('files', name))
   // data.append("files", file);
-  const uploadPath = this.$serverHostPath + '/upload'
+  const uploadPath = serverHostPath + '/upload'
   return fetch(uploadPath, {
     method: 'POST',
     body: data
