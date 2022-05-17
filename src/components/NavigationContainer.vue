@@ -21,6 +21,13 @@ export default {
   methods: {
     clickedTrash () {
       this.isPopup = true
+    },
+    scrollEnd () {
+      let content = event.target
+      if (content.offsetHeight + content.scrollTop >= content.scrollHeight) {
+        console.log('scrollend')
+        this.$refs.container.loadMore()
+      }
     }
   }
 }
@@ -30,11 +37,12 @@ export default {
     <div class="header">
       <navHeader
         @selectBtnClick="selectBtnToggle"
+        @selectedFiles="uploadData"
         :total-counts="totalCounts"
         :is-selected-mode="isSelectedMode"
       />
     </div>
-    <div class="container">
+    <div class="container" @scroll="scrollEnd">
       <router-view ref="container"
         :is-selected-mode="isSelectedMode"
         @selectedCounts="setSelectedCount"

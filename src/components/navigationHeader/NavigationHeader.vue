@@ -30,6 +30,11 @@ export default {
   methods: {
     selectBtnClick () {
       this.$emit('selectBtnClick')
+    },
+    insertData () {
+      let arys = event.target.files
+      // 把檔案傳到外層處理
+      this.$emit('selectedFiles', arys)
     }
   }
 
@@ -42,7 +47,7 @@ export default {
     </div>
     <div class="HeaderRight">
       <button id="selectBtn" @click="selectBtnClick">{{selectBtnTitle}}</button>
-      <input id="file" type="file" style="display: none" data-target="file-uploader" multiple />
+      <input id="file" type="file" style="display: none" data-target="file-uploader" multiple  @change="insertData"/>
       <i class="fa-solid fa-align-center fa-folder-plus fa-2x add" onclick="file.click()"></i>
     </div>
 </div>

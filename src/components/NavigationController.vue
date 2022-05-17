@@ -1,5 +1,5 @@
 <script>
-
+import fetchWS from '@/fetchWS.js'
 export default {
   name: 'navController',
   data () {
@@ -36,6 +36,19 @@ export default {
           this.isPopup = false
           break
       }
+    },
+    uploadData (data) {
+      switch (this.selectedType) {
+        case 'Library':
+          this.uploadPhotos(data)
+          break
+      }
+    },
+    uploadPhotos (arys) {
+      fetchWS.wsFileUpload(arys).then(data => {
+        // 通知 Library 新增了哪些圖片檔
+        this.$refs.container.updateData(data)
+      })
     }
 
   }
