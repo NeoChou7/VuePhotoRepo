@@ -6,6 +6,10 @@ export default {
   props: {
     isSelectedMode: {
       type: Boolean
+    },
+    scrollLocation: {
+      type: Number,
+      default: 0
     }
   },
   components: {
@@ -38,27 +42,22 @@ export default {
         this.$refs.imgContainer.removeChild(this.$refs.imgContainer.firstChild)
       }
       // 給初始節
-      this.$refs.imgContainer.appendChild(this.createImgNode(this.fullImgIndex - 1))
-      this.$refs.imgContainer.appendChild(this.createImgNode(this.fullImgIndex))
-      this.$refs.imgContainer.appendChild(this.createImgNode(this.fullImgIndex + 1))
+      this.$refs.imgContainer.appendChild(
+        this.createImgNode(this.fullImgIndex - 1)
+      )
+      this.$refs.imgContainer.appendChild(
+        this.createImgNode(this.fullImgIndex)
+      )
+      this.$refs.imgContainer.appendChild(
+        this.createImgNode(this.fullImgIndex + 1)
+      )
       // 指定中間
       this.$nextTick(function () {
         let firstChild = this.$refs.imgContainer.firstChild
-        console.log(firstChild)
-
         let borderW = firstChild.style.borderWidth
-        this.$refs.imgContainer.parentElement.scrollLeft = this.$refs.imgContainer.parentElement.offsetWidth + borderW
+        this.$refs.imgContainer.parentElement.scrollLeft =
+          this.$refs.imgContainer.parentElement.offsetWidth + borderW
       })
-
-      // <div>
-      //       <img :src="getPreFullImgPath" />
-      //     </div>
-      //     <div>
-      //       <img :src="getFullImgPathByIndex()" />
-      //     </div>
-      //     <div>
-      //       <img :src="getNextFullImgPath" />
-      //     </div>
     },
     createImgNode (index) {
       let _div = document.createElement('div')
@@ -70,7 +69,7 @@ export default {
       return _div
     },
     getFullImgPath (index) {
-      if (index < 0) return ''
+      if (index < 0 || index >= this.imgNames.length) return ''
       return this.$serverHostPath + /image/ + this.imgNames[index]
     },
     closeFullImg () {
@@ -91,7 +90,6 @@ export default {
     },
     deleteAction () {
       fetchWS.wsDeleteImages(this.selectedImgs).then((data) => {
-        console.log(data)
         // ws if(刪除成功)
         // 刪除
         this.selectedImgs.forEach((element) => {
@@ -140,14 +138,15 @@ export default {
         // 往上一頁
         element.scrollLeft = 0
         // 刪除最後
-        console.log(this.$refs.imgContainer.lastChild)
         this.$refs.imgContainer.removeChild(this.$refs.imgContainer.lastChild)
         this.fullImgIndex = this.fullImgIndex - 1
-        this.$refs.imgContainer.prepend(this.createImgNode(this.fullImgIndex - 1))
+        this.$refs.imgContainer.prepend(
+          this.createImgNode(this.fullImgIndex - 1)
+        )
         element.scrollLeft = element.offsetWidth
         // eElement.insertBefore(newFirstElement, eElement.firstChild);
       } else if (leftX > element.clientWidth * 1.5) {
-        if (this.fullImgIndex >= this.imgNames.length) {
+        if (this.fullImgIndex >= this.imgNames.length - 1) {
           element.scrollLeft = element.offsetWidth
           return
         }
@@ -156,12 +155,22 @@ export default {
         // 刪除第一
         this.$refs.imgContainer.removeChild(this.$refs.imgContainer.firstChild)
         this.fullImgIndex = this.fullImgIndex + 1
-        this.$refs.imgContainer.appendChild(this.createImgNode(this.fullImgIndex + 1))
+        this.$refs.imgContainer.appendChild(
+          this.createImgNode(this.fullImgIndex + 1)
+        )
         element.scrollLeft = element.offsetWidth
       } else {
         // 回本頁
         element.scrollLeft = element.offsetWidth
       }
+    },
+    convertYYYYMMDDHHMMtoDate (strDate) {
+      let year = strDate.slice(0, 4)
+      let month = strDate.slice(4, 6)
+      let day = strDate.slice(6, 8)
+      let hour = strDate.slice(8, 10)
+      let min = strDate.slice(10, 12)
+      return year + '/' + month + '/' + day + ' ' + hour + ':' + min
     }
   },
   watch: {
@@ -188,16 +197,18 @@ export default {
         this.$serverHostPath + /image/ + this.imgNames[this.fullImgIndex + 1]
       )
     },
-
     getFullImgInfo () {
       if (this.fullImgIndex < 0) return ''
       let name = this.imgNames[this.fullImgIndex]
-      let year = name.slice(0, 4)
-      let month = name.slice(4, 6)
-      let day = name.slice(6, 8)
-      let hour = name.slice(8, 10)
-      let min = name.slice(10, 12)
-      return year + '/' + month + '/' + day + ' ' + hour + ':' + min
+      return this.convertYYYYMMDDHHMMtoDate(name)
+    },
+    updateDate () {
+      if (this.$el === undefined) return this.scrollLocation
+      if (this.imgNames === undefined || this.imgNames.length === 0) return ''
+      let location = this.scrollLocation / this.$el.offsetHeight
+      let index = Math.ceil(this.imgNames.length * location)
+      let name = this.imgNames[index]
+      return this.convertYYYYMMDDHHMMtoDate(name)
     }
   },
   mounted () {
@@ -219,7 +230,6 @@ export default {
       <img
         :src="getFullPath(name)"
         :class="'minImg'"
-        @touchend.prevent="fullImg($event)"
         @click.prevent="fullImg($event)"
         :name="name"
       />
@@ -234,7 +244,18 @@ export default {
         <div class="tickImg"></div>
       </div>
     </div>
-    <div v-show="isShowFullImg" :class="['fullscreen', 'fullImg']" >
+    <div class="scrollDate">
+      <div>
+        <span>{{updateDate}}</span>
+      </div>
+    </div>
+    <div class="intervalBar">
+      <span>年</span>
+      <span>月</span>
+      <span>日</span>
+      <span>所有照片</span>
+    </div>
+    <div v-show="isShowFullImg" :class="['fullscreen', 'fullImg']">
       <div class="fullImgHeader">
         <span id="fullImgTitle"
           >{{ fullImgIndex + 1 }}/{{ imgNames.length }}</span
@@ -246,7 +267,7 @@ export default {
           X
         </button>
       </div>
-      <div class="fullImgContent" @touchend="detectTouchEnd()">
+      <div class="fullImgContent" @touchend.prevent="detectTouchEnd()">
         <div id="imgContainer" ref="imgContainer"></div>
       </div>
       <div class="fullImgFooter">{{ getFullImgInfo }}</div>
@@ -282,7 +303,7 @@ export default {
   background-size: contain;
 }
 .fullscreen {
-  position: fixed;
+  position: absolute;
   top: 0px;
   left: 0px;
   width: 100vw;
@@ -309,12 +330,12 @@ export default {
   height: calc(100% - 6rem);
   width: calc(100%);
 
-  overflow:scroll;
-  overflow-y:hidden;
+  overflow: scroll;
+  overflow-y: hidden;
 }
-.fullImgContent::-webkit-scrollbar{
-    width:0;
-    background-color:transparent;
+.fullImgContent::-webkit-scrollbar {
+  width: 0;
+  background-color: transparent;
 }
 .fullImgContent > div {
   height: calc(100%);
@@ -343,5 +364,27 @@ export default {
   color: white;
   text-align: center;
   line-height: 3rem;
+}
+.scrollDate {
+  position: absolute;
+  top: calc(3rem + 10px);
+  left: 10px;
+}
+.scrollDate > div{
+  backdrop-filter: blur(5px);
+  border-radius:25%;
+}
+.scrollDate span{
+  font-weight:bold;
+  color: white;
+}
+.intervalBar{
+  position: absolute;
+  left:50%;
+  transform: translateX(-50%);
+  bottom: calc(3rem + 20px);
+  backdrop-filter: blur(5px);
+  border-radius:5%;
+  color:white;
 }
 </style>

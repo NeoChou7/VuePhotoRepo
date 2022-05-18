@@ -7,7 +7,9 @@ export default {
       isSelectedMode: false,
       selectedType: 'Library',
       totalCounts: 0,
-      selectedCounts: 0
+      selectedCounts: 0,
+      isPopup: false,
+      scrollLocation: 0
     }
   },
   methods: {

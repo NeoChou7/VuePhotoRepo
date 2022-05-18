@@ -13,19 +13,14 @@ export default {
     navOperator,
     modal
   },
-  data () {
-    return {
-      isPopup: false
-    }
-  },
   methods: {
     clickedTrash () {
       this.isPopup = true
     },
     scrollEnd () {
       let content = event.target
+      this.scrollLocation = content.scrollTop
       if (content.offsetHeight + content.scrollTop >= content.scrollHeight) {
-        console.log('scrollend')
         this.$refs.container.loadMore()
       }
     }
@@ -45,6 +40,7 @@ export default {
     <div class="container" @scroll="scrollEnd">
       <router-view ref="container"
         :is-selected-mode="isSelectedMode"
+        :scroll-location="scrollLocation"
         @selectedCounts="setSelectedCount"
         @totalCounts="setTotalCount"
       />
