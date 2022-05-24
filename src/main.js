@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import env from '../config/env'
+import store from './store'
 // from config
 
 Vue.config.productionTip = false
@@ -12,6 +13,7 @@ Vue.prototype.$serverHostPath = env.serverHostPath
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

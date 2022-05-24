@@ -1,19 +1,27 @@
 <script>
 export default {
   name: 'navHeader',
-  data () {
-    return {
-      selectBtnTitle: '選取'
+  // data () {
+  //   return {
+  //     selectBtnTitle: '選取'
 
-    }
-  },
+  //   }
+  // },
   props: {
     isSelectedMode: {
       type: Boolean
+    }
+    // totalCounts: {
+    //   type: Number,
+    //   default: 0
+    // }
+  },
+  computed: {
+    totalCounts () {
+      return this.$store.getters.imgTotalCounts
     },
-    totalCounts: {
-      type: Number,
-      default: 0
+    selectBtnTitle () {
+      return this.$store.getters.selectBtnTitle
     }
   },
   mounted: function () {
@@ -22,14 +30,16 @@ export default {
     document.head.appendChild(recaptchaScript)
   },
   watch: {
-    isSelectedMode () {
-      //  修改
-      this.selectBtnTitle = this.isSelectedMode ? '取消' : '選取'
-    }
+    // isSelectedMode () {
+    //   //  修改
+    //   this.selectBtnTitle = this.isSelectedMode ? '取消' : '選取'
+    // }
   },
   methods: {
     selectBtnClick () {
-      this.$emit('selectBtnClick')
+      // this.$emit('selectBtnClick')
+      // 替換狀態
+      this.$store.dispatch('clickSelectBtn')
     },
     insertData () {
       let arys = event.target.files

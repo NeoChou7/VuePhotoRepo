@@ -31,27 +31,9 @@ export default {
         :key="tab.name"
       >
         <i :class="tab.iconClass"></i>
-        <spam>{{ tab.name }}</spam>
+        <span>{{ tab.name }}</span>
       </router-link>
     </div>
-    <!-- </div>
-      <div class="nav-item active">
-        <i class="material-icons home-icon"> home </i>
-        <span class="nav-text">Home</span>
-      </div>
-      <div class="nav-item">
-        <i class="material-icons favorite-icon"> favorite </i>
-        <span class="nav-text">Likes</span>
-      </div>
-      <div class="nav-item">
-        <i class="material-icons search-icon"> search </i>
-        <span class="nav-text">Search</span>
-      </div>
-      <div class="nav-item">
-        <i class="material-icons person-icon"> person </i>
-        <span class="nav-text">Profile</span>
-      </div>
-    </div> -->
   </div>
 </template>
 <style scoped>

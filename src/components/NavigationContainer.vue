@@ -4,6 +4,7 @@ import navBar from './navigationbar/NavigationBar.vue'
 import navOperator from './navigationOperrator/NavigationOperator.vue'
 import navController from './NavigationController.vue'
 import modal from './Modal.vue'
+// import { mapGetters } from 'vuex'
 export default {
   name: 'navContainer',
   mixins: [navController],
@@ -12,6 +13,15 @@ export default {
     navBar,
     navOperator,
     modal
+  },
+  computed: {
+    isSelectMode () {
+      return this.$store.state.stateType === 1
+    },
+    isImgDeleteMode () {
+      return this.$store.state.stateType === 2
+    }
+    // ...mapGetters(['isSelectMode'])
   },
   methods: {
     clickedTrash () {
@@ -24,6 +34,9 @@ export default {
         this.$refs.container.loadMore()
       }
     }
+  },
+  mounted () {
+    this.$store.dispatch('getImages', '')
   }
 }
 </script>
@@ -39,23 +52,17 @@ export default {
     </div>
     <div class="container" @scroll="scrollEnd">
       <router-view ref="container"
-        :is-selected-mode="isSelectedMode"
-        :scroll-location="scrollLocation"
         @selectedCounts="setSelectedCount"
         @totalCounts="setTotalCount"
       />
     </div>
     <div class="footer">
-      <navBar @clickType="clickType" />
+      <navBar/>
     </div>
-    <div v-show="isSelectedMode">
-      <navOperator
-        :container-type="selectedType"
-        :operate-counts="selectedCounts"
-        @clickedTrash="clickedTrash"
-      />
+    <div v-show="isSelectMode">
+      <navOperator/>
     </div>
-    <modal v-show="isPopup"  @clickedOption="clickedOption" />
+    <modal v-show="isImgDeleteMode"  @clickedOption="clickedOption" />
   </div>
 </template>
 <style>

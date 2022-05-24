@@ -1,5 +1,5 @@
 <script>
-
+import {mapGetters} from 'vuex'
 export default{
   name: 'navOperator',
   props: {
@@ -28,11 +28,13 @@ export default{
           name = '照片'
       }
       return name
-    }
+    },
+    ...mapGetters(['imgSelectedCount', 'imgSelectedCountUnit'])
   },
   methods: {
     PopTrashDialog () {
-      this.$emit('clickedTrash')
+      // this.$emit('clickedTrash')
+      this.$store.dispatch('clickedDeleteImgBtn', 2)
     }
   }
 
@@ -40,7 +42,7 @@ export default{
 </script>
 <template>
   <div class='selectItems'>
-    <span id="selectCount">已選取{{operateCounts}}張{{typeName}}</span>
+    <span id="selectCount">已選取{{imgSelectedCount}}{{imgSelectedCountUnit}}</span>
     <i class="fa-solid fa-cloud-arrow-down export"></i>
     <i id='trashCanBtn' class="fa-solid fa-trash trashcan" @click="PopTrashDialog"></i>
   </div>

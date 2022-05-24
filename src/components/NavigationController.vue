@@ -4,11 +4,11 @@ export default {
   name: 'navController',
   data () {
     return {
-      isSelectedMode: false,
-      selectedType: 'Library',
-      totalCounts: 0,
-      selectedCounts: 0,
-      isPopup: false,
+      // isSelectedMode: false,
+      // selectedType: 'Library',
+      // totalCounts: 0,
+      // selectedCounts: 0,
+      // isPopup: false,
       scrollLocation: 0
     }
   },
@@ -28,14 +28,15 @@ export default {
     clickedOption (option) {
       switch (option) {
         case 999:// 取消
-          this.isPopup = false
+          this.$store.dispatch('cancleDelete')
           break
         case 0:// 確定
           // this.$emit('deleteAct')
-          this.$refs.container.deleteAction()
+          // this.$refs.container.deleteAction()
+          this.$store.dispatch('deleteImgAction')
           break
         default:
-          this.isPopup = false
+          this.$store.dispatch('cancleDelete')
           break
       }
     },
