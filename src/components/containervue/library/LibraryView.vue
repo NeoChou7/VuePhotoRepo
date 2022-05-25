@@ -1,36 +1,43 @@
 <script>
 // import fetchWS from '@/fetchWS.js'
 import modal from '../../Modal.vue'
+import { mapGetters } from 'vuex'
+import stateType from '@/Types'
 export default {
   name: 'libraryView',
-  // props: {
-  //   isSelectedMode: {
-  //     type: Boolean
-  //   },
-  //   scrollLocation: {
-  //     type: Number,
-  //     default: 0
-  //   }
-  // },
   components: {
     modal
   },
-  // data () {
-  //   return {
-  //     isShowFullImg: false,
-  //     fullImgIndex: -1
-  //   }
-  // },
+  data () {
+    return {
+      sentinelDate: ''
+    }
+  },
   methods: {
     getxsImgFullPath: function (name) {
       return this.$serverHostPath + '/image-xs/' + name
     },
     onImgClick (index) {
       // if imgbrowser 放大
-      // if img selected 改為 true
-      if (this.$store.state.stateType === 1) {
-        this.$store.dispatch('clickedImg', index)
+      switch (this.$store.state.stateType) {
+        case stateType.ImgBrowser:
+          this.$store.dispatch('openImgFullScreen', index)
+          break
+        case stateType.ImgSelected:
+          this.$store.dispatch('clickedImg', index)
+          break
       }
+    },
+    closeFullImg () {
+      this.$store.dispatch('closeImgFullScreen')
+    },
+    didShowBrowserDateInfo (imgName, index) {
+      console.log(this.sentinelDate)
+      if (index % 3 === 0 && this.sentinelDate !== imgName.substring(0, 8)) {
+        this.sentinelDate = imgName.substring(0, 8)
+        return true
+      }
+      return false
     }
     // fullImg: function (event) {
     //   // event.preventDefault()
@@ -76,9 +83,6 @@ export default {
     // getFullImgPath (index) {
     //   if (index < 0 || index >= this.imgNames.length) return ''
     //   return this.$serverHostPath + /image/ + this.imgNames[index]
-    // },
-    // closeFullImg () {
-    //   this.isShowFullImg = false
     // },
     // selectImg: function (event) {
     //   event.preventDefault()
@@ -193,7 +197,18 @@ export default {
     getImages () {
       return this.$store.state.images
       // return this.$store.getters.getImages
-    }
+    },
+    isShowFullImg () {
+      return this.$store.state.stateType === stateType.ImgFullScreen
+    },
+    ...mapGetters([
+      'imgDateInfo',
+      'imgCurrentPage',
+      'totalCounts',
+      'currentFullImgSrc',
+      'preFullImgSrc',
+      'nextFullImgSrc'
+    ]),
     // getPreFullImgPath () {
     //   if (this.fullImgIndex - 1 < 0) return ''
     //   return (
@@ -211,14 +226,20 @@ export default {
     //   let name = this.imgNames[this.fullImgIndex]
     //   return this.convertYYYYMMDDHHMMtoDate(name)
     // },
-    // updateDate () {
-    //   if (this.$el === undefined) return this.scrollLocation
-    //   if (this.imgNames === undefined || this.imgNames.length === 0) return ''
-    //   let location = this.scrollLocation / this.$el.offsetHeight
-    //   let index = Math.ceil(this.imgNames.length * location)
-    //   let name = this.imgNames[index]
-    //   return this.convertYYYYMMDDHHMMtoDate(name)
-    // }
+    updateDate () {
+      if (this.$el === undefined) return this.scrollLocation
+      if (this.imgNames === undefined || this.imgNames.length === 0) return ''
+      let location = this.scrollLocation / this.$el.offsetHeight
+      let index = Math.ceil(this.imgNames.length * location)
+      let name = this.imgNames[index]
+      return this.convertYYYYMMDDHHMMtoDate(name)
+    }
+  },
+  created () {
+    this.$store.dispatch('changeNavigationItem', stateType.ImgBrowser)
+    if (!this.$store.state.images.length) {
+      this.$store.dispatch('getImages', '')
+    }
   },
   mounted () {
     // 撈資料給 imgNames
@@ -235,7 +256,15 @@ export default {
 
 <template>
   <div>
-    <div v-for="(imgs,index) in getImages" :class="'minDiv'" :key="imgs.name" @click="onImgClick(index)">
+    <div
+      v-for="(imgs, index) in getImages"
+      :class="'minDiv'"
+      :key="imgs.name"
+      @click="onImgClick(index)"
+    >
+    <!-- <div v-if="didShowBrowserDateInfo(imgs.name,index)" class="browser-date-info">
+      <span>{{sentinelDate}}</span>
+    </div> -->
       <img
         :src="getxsImgFullPath(imgs.name)"
         :class="'minImg'"
@@ -243,7 +272,7 @@ export default {
       />
       <div
         v-show="imgs.isSelected"
-        :class="['minImg','deleteClick']"
+        :class="['minImg', 'deleteClick']"
         mask
         :name="imgs.name"
       >
@@ -251,9 +280,9 @@ export default {
       </div>
     </div>
     <div class="scrollDate">
-      <div>
-        <!-- <span>{{updateDate}}</span> -->
-      </div>
+      <!-- <div>
+        <span>{{updateDate}}</span>
+      </div> -->
     </div>
     <div class="intervalBar">
       <span>年</span>
@@ -262,9 +291,8 @@ export default {
       <span>所有照片</span>
     </div>
     <div v-show="isShowFullImg" :class="['fullscreen', 'fullImg']">
-      <!-- <div class="fullImgHeader">
-        <span id="fullImgTitle"
-          >{{ fullImgIndex + 1 }}/{{ imgNames.length }}</span
+      <div class="fullImgHeader">
+        <span id="fullImgTitle">{{ imgCurrentPage }}/{{ totalCounts }}</span
         ><button
           class="closeIcon"
           @click.prevent="closeFullImg"
@@ -273,12 +301,22 @@ export default {
           X
         </button>
       </div>
-      <div class="fullImgContent" @touchend.prevent="detectTouchEnd()">
-        <div id="imgContainer" ref="imgContainer"></div>
+      <div class="fullImgContent" ><!--@touchend.prevent="detectTouchEnd()"-->
+        <!-- <div id="imgContainer" ref="imgContainer"></div> -->
+        <div>
+          <div>
+            <img :src="preFullImgSrc" />
+          </div>
+          <div>
+            <img :src="currentFullImgSrc" />
+          </div>
+          <div>
+            <img :src="nextFullImgSrc" />
+          </div>
+        </div>
       </div>
-      <div class="fullImgFooter">{{ getFullImgInfo }}</div> -->
+      <div class="fullImgFooter">{{ imgDateInfo }}</div>
     </div>
-    <!-- <modal v-show="isShowFullImg"/> -->
   </div>
 </template>
 <style scoped>
@@ -376,21 +414,27 @@ export default {
   top: calc(3rem + 10px);
   left: 10px;
 }
-.scrollDate > div{
+.scrollDate > div {
   backdrop-filter: blur(5px);
-  border-radius:25%;
+  border-radius: 25%;
 }
-.scrollDate span{
-  font-weight:bold;
+.scrollDate span {
+  font-weight: bold;
   color: white;
 }
-.intervalBar{
+.intervalBar {
   position: absolute;
-  left:50%;
+  left: 50%;
   transform: translateX(-50%);
   bottom: calc(3rem + 20px);
   backdrop-filter: blur(5px);
-  border-radius:5%;
-  color:white;
+  border-radius: 5%;
+  color: white;
+}
+.browser-date-info{
+  position: absolute;
+  color: white;
+  top:-5px;
+  z-index: 3;
 }
 </style>

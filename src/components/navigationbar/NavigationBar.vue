@@ -1,11 +1,12 @@
 <script>
+import stateType from '@/Types'
 export default {
   name: 'navBar',
   data () {
     return {
       tabName: [
-        { name: '圖庫', iconClass: 'fa-solid fa-images', to: '/Library' },
-        { name: '影片', iconClass: 'fa-solid fa-film', to: '/Video' },
+        { name: '圖庫', iconClass: 'fa-solid fa-images', to: '/Library', stateType: stateType.ImgBrowser },
+        { name: '影片', iconClass: 'fa-solid fa-film', to: '/Video', stateType: stateType.VideoBrowser },
         { name: '相簿', iconClass: 'fa-solid fa-book', to: '/Library' }
       ]
     }
@@ -13,6 +14,11 @@ export default {
   computed: {
     width () {
       return 'width:calc(100%/' + this.tabName.length + ');'
+    }
+  },
+  methods: {
+    changeStateType (type) {
+      this.$store.dispatch('changeNavigationItem', type)
     }
   },
   mounted: function () {
@@ -28,6 +34,7 @@ export default {
         :class="'nav-item'"
         :style="width"
         :to="tab.to"
+        @click.native="changeStateType(tab.stateType)"
         :key="tab.name"
       >
         <i :class="tab.iconClass"></i>

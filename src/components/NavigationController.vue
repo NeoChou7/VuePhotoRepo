@@ -1,5 +1,5 @@
 <script>
-import fetchWS from '@/fetchWS.js'
+// import fetchWS from '@/fetchWS.js'
 export default {
   name: 'navController',
   data () {
@@ -13,18 +13,18 @@ export default {
     }
   },
   methods: {
-    selectBtnToggle () {
-      this.isSelectedMode = !this.isSelectedMode
-    },
-    clickType (type) {
-      this.selectedType = type
-    },
-    setTotalCount (count) {
-      this.totalCounts = count
-    },
-    setSelectedCount (count) {
-      this.selectedCounts = count
-    },
+    // selectBtnToggle () {
+    //   this.isSelectedMode = !this.isSelectedMode
+    // },
+    // clickType (type) {
+    //   this.selectedType = type
+    // },
+    // setTotalCount (count) {
+    //   this.totalCounts = count
+    // },
+    // setSelectedCount (count) {
+    //   this.selectedCounts = count
+    // },
     clickedOption (option) {
       switch (option) {
         case 999:// 取消
@@ -39,20 +39,20 @@ export default {
           this.$store.dispatch('cancleDelete')
           break
       }
-    },
-    uploadData (data) {
-      switch (this.selectedType) {
-        case 'Library':
-          this.uploadPhotos(data)
-          break
-      }
-    },
-    uploadPhotos (arys) {
-      fetchWS.wsFileUpload(arys).then(data => {
-        // 通知 Library 新增了哪些圖片檔
-        this.$refs.container.updateData(data)
-      })
     }
+    // uploadData (data) {
+    //   switch (this.selectedType) {
+    //     case 'Library':
+    //       this.uploadPhotos(data)
+    //       break
+    //   }
+    // },
+    // uploadPhotos (arys) {
+    //   fetchWS.wsFileUpload(arys).then(data => {
+    //     // 通知 Library 新增了哪些圖片檔
+    //     this.$refs.container.updateData(data)
+    //   })
+    // }
 
   }
 

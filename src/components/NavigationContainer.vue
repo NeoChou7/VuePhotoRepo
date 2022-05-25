@@ -31,30 +31,22 @@ export default {
       let content = event.target
       this.scrollLocation = content.scrollTop
       if (content.offsetHeight + content.scrollTop >= content.scrollHeight) {
-        this.$refs.container.loadMore()
+        // this.$refs.container.loadMore()
+        this.$store.dispatch('loadMore')
       }
     }
   },
   mounted () {
-    this.$store.dispatch('getImages', '')
   }
 }
 </script>
 <template>
   <div>
     <div class="header">
-      <navHeader
-        @selectBtnClick="selectBtnToggle"
-        @selectedFiles="uploadData"
-        :total-counts="totalCounts"
-        :is-selected-mode="isSelectedMode"
-      />
+      <navHeader/>
     </div>
     <div class="container" @scroll="scrollEnd">
-      <router-view ref="container"
-        @selectedCounts="setSelectedCount"
-        @totalCounts="setTotalCount"
-      />
+      <router-view/>
     </div>
     <div class="footer">
       <navBar/>

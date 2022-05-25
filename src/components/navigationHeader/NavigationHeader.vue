@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     totalCounts () {
-      return this.$store.getters.imgTotalCounts
+      return this.$store.getters.totalCounts
     },
     selectBtnTitle () {
       return this.$store.getters.selectBtnTitle
@@ -44,7 +44,7 @@ export default {
     insertData () {
       let arys = event.target.files
       // 把檔案傳到外層處理
-      this.$emit('selectedFiles', arys)
+      this.$store.dispatch('upload', arys)
     }
   }
 
@@ -53,7 +53,7 @@ export default {
 <template>
 <div>
     <div>
-      <span id="totalNum">總共{{totalCounts}}張</span>
+      <span id="totalNum">{{totalCounts}}</span>
     </div>
     <div class="HeaderRight">
       <button id="selectBtn" @click="selectBtnClick">{{selectBtnTitle}}</button>
