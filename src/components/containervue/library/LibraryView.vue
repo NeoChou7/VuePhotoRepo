@@ -3,15 +3,12 @@
 import modal from '../../Modal.vue'
 import { mapGetters } from 'vuex'
 import stateType from '@/Types'
+
 export default {
   name: 'libraryView',
+  sentinelDate: '',
   components: {
     modal
-  },
-  data () {
-    return {
-      sentinelDate: ''
-    }
   },
   methods: {
     getxsImgFullPath: function (name) {
@@ -262,9 +259,9 @@ export default {
       :key="imgs.name"
       @click="onImgClick(index)"
     >
-    <!-- <div v-if="didShowBrowserDateInfo(imgs.name,index)" class="browser-date-info">
+    <div v-if="didShowBrowserDateInfo(imgs.name,index)" class="browser-date-info">
       <span>{{sentinelDate}}</span>
-    </div> -->
+    </div>
       <img
         :src="getxsImgFullPath(imgs.name)"
         :class="'minImg'"

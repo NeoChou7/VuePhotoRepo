@@ -34,7 +34,7 @@ export default{
   methods: {
     PopTrashDialog () {
       // this.$emit('clickedTrash')
-      this.$store.dispatch('clickedDeleteImgBtn', 2)
+      this.$store.dispatch('clickedDeleteBtn')
     }
   }
 

@@ -30,8 +30,10 @@ export default new Vuex.Store({
     totalCounts (state) {
       switch (state.stateType) {
         case stateType.ImgBrowser:
+        case stateType.ImgSelected:
           return state.images.length + '張照片'
         case stateType.VideoBrowser:
+        case stateType.VideoSelected:
           return state.videos.length + '支影片'
         default:
           return 0
@@ -39,20 +41,34 @@ export default new Vuex.Store({
     },
     selectBtnTitle (state) {
       switch (state.stateType) {
-        case 0:
+        case stateType.ImgBrowser:
+        case stateType.VideoBrowser:
           return '選取'
-        case 1:
+        case stateType.ImgSelected:
+        case stateType.VideoSelected:
           return '取消'
         default:
           return '選取'
       }
     },
-    // isSelectMode (state) {
-    //   return state.stateType === 1
-    // },
-    // isImgDeleteMode (state) {
-    //   return state.stateType === 2
-    // },
+    isSelectMode (state) {
+      switch (state.stateType) {
+        case stateType.ImgSelected:
+        case stateType.VideoSelected:
+          return true
+        default:
+          return false
+      }
+    },
+    isDeleteMode (state) {
+      switch (state.stateType) {
+        case stateType.ImgDelete:
+        case stateType.VideoDelete:
+          return true
+        default:
+          return false
+      }
+    },
     imgSelectedCount (state) {
       return state.images.filter(item => item.isSelected).length
     },
@@ -81,6 +97,20 @@ export default new Vuex.Store({
       if (state.fullScreenImgIndex + 1 >= state.images.length) return ''
       let name = state.images[state.fullScreenImgIndex + 1].name
       return 'http://localhost:8080' + '/image/' + name
+    },
+    videoDuration: (state) => index => {
+      return state.videos[index].duration
+    },
+    videoRestOfTime: (state) => index => {
+    //   let totalTime = Math.ceil(state.videos[index].duration)
+    //   let currentT = Math.ceil(state.videos[index].currentTime)
+      //   let restOfTime = Math.round(totalTime - currentT)
+      let totalTime = state.videos[index].duration
+      let currentT = state.videos[index].currentTime
+      let restOfTime = totalTime - currentT
+      let time = new Date(restOfTime * 1000).toISOString().substring(11, 19)
+      time = time.slice(0, 2) !== '00' ? time : time.substring(3, 8)
+      return time
     }
 
   },
@@ -96,6 +126,7 @@ export default new Vuex.Store({
     },
     clearSelected (state) {
       state.images.forEach(img => { img.isSelected = false })
+      state.videos.forEach(video => { video.isSelected = false })
     },
     deleteSelectedImg (state) {
       state.images = state.images.filter(item => !item.isSelected)
@@ -121,7 +152,7 @@ export default new Vuex.Store({
       let limitFilename = state.images[state.images.length - 1].name
       payload.forEach((element) => {
         if (element >= limitFilename) {
-          state.videos.push({name: element, isSelected: false})
+          state.videos.push({name: element, isSelected: false, currentTime: 0, duration: 0})
         }
       })
 
@@ -134,8 +165,17 @@ export default new Vuex.Store({
     addVideos (state, jsonData) {
       for (var i in jsonData) {
         if (!jsonData.hasOwnProperty(i)) continue
-        state.videos.push({name: jsonData[i], isSelected: false})
+        state.videos.push({name: jsonData[i], isSelected: false, currentTime: 0, duration: 0})
       }
+    },
+    setDuration (state, {index, duration}) {
+      state.videos[index].duration = duration
+    },
+    setCurrentTime (state, {index, currentTime}) {
+      state.videos[index].currentTime = currentTime
+    },
+    deleteSelectedVideo (state) {
+      state.videos = state.videos.filter(item => !item.isSelected)
     }
   },
   actions: {
@@ -145,8 +185,17 @@ export default new Vuex.Store({
       })
     },
     clickSelectBtn (context) {
-      context.commit('changeStateType', context.state.stateType === stateType.ImgBrowser ? stateType.ImgSelected : stateType.ImgBrowser)
-      if (context.state.stateType === stateType.ImgBrowser) {
+      switch (context.state.stateType) {
+        case stateType.ImgBrowser:
+        case stateType.ImgSelected:
+          context.commit('changeStateType', context.state.stateType === stateType.ImgBrowser ? stateType.ImgSelected : stateType.ImgBrowser)
+          break
+        case stateType.VideoBrowser:
+        case stateType.VideoSelected:
+          context.commit('changeStateType', context.state.stateType === stateType.VideoBrowser ? stateType.VideoSelected : stateType.VideoBrowser)
+          break
+      }
+      if (context.state.stateType === stateType.ImgBrowser || context.state.stateType === stateType.VideoBrowser) {
         // 取消選取
         context.commit('clearSelected')
       }
@@ -154,17 +203,58 @@ export default new Vuex.Store({
     clickedImg (context, index) {
       context.state.images[index].isSelected = !context.state.images[index].isSelected
     },
-    clickedDeleteImgBtn (context) {
-      context.commit('changeStateType', stateType.ImgDelete)
+    clickedDeleteBtn (context) {
+      switch (context.state.stateType) {
+        case stateType.ImgSelected:
+          context.commit('changeStateType', stateType.ImgDelete)
+          break
+        case stateType.VideoSelected:
+          context.commit('changeStateType', stateType.VideoDelete)
+          break
+        default:
+          break
+      }
     },
     cancleDelete (context) {
-      context.commit('changeStateType', stateType.ImgSelected)
+      switch (context.state.stateType) {
+        case stateType.ImgDelete:
+          context.commit('changeStateType', stateType.ImgSelected)
+          break
+        case stateType.VideoDelete:
+          context.commit('changeStateType', stateType.VideoSelected)
+          break
+        default:
+          break
+      }
     },
-    deleteImgAction (context) {
+    deleteAction (context) {
       // ws刪除
-      let deleteImgs = context.state.images.filter(ele => ele.isSelected).map(ele => ele.name)
-      fetchWS.wsDeleteImages(deleteImgs).then((data) => {
-        context.commit('deleteSelectedImg')
+      let deleteItems = []
+      switch (context.state.stateType) {
+        case stateType.ImgDelete:
+          deleteItems = context.state.images.filter(ele => ele.isSelected).map(ele => ele.name)
+          break
+        case stateType.VideoDelete:
+          deleteItems = context.state.videos.filter(ele => ele.isSelected).map(ele => ele.name)
+          break
+        default:
+          break
+      }
+      console.log(deleteItems)
+      fetchWS.wsDeleteImages(deleteItems).then((data) => {
+        console.log(context.state.stateType)
+        switch (context.state.stateType) {
+          case stateType.ImgDelete:
+            context.commit('deleteSelectedImg')
+            context.commit('changeStateType', stateType.ImgSelected)
+            break
+          case stateType.VideoDelete:
+            context.commit('deleteSelectedVideo')
+            context.commit('changeStateType', stateType.VideoSelected)
+            break
+          default:
+            break
+        }
       }).catch((err) => console.log('err', err))
     },
     upload (context, payload) {
@@ -218,6 +308,15 @@ export default new Vuex.Store({
       fetchWS.wsGetVideos(fromName).then((jsonData) => {
         context.commit('addVideos', jsonData)
       })
+    },
+    setVideoMetaData (context, payload) {
+      context.commit('setDuration', payload)
+    },
+    setVideoCurrentTime (context, payload) {
+      context.commit('setCurrentTime', payload)
+    },
+    clickedVideo (context, index) {
+      context.state.videos[index].isSelected = !context.state.videos[index].isSelected
     }
   }
 })

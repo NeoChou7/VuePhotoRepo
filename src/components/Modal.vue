@@ -11,7 +11,7 @@ export default {
 </script>
 <template>
   <div class='fullscreen dialog' @touched.prevent="clickedOption(999)" @click="clickedOption(999)">
-    <button class='deleteBlockBtn' @touched.prevent="clickedOption(0)" @click="clickedOption(0)">刪除</button>
+    <button class='deleteBlockBtn' @touched.prevent.stop="clickedOption(0)" @click.stop="clickedOption(0)">刪除</button>
    <button class='cancleBlockBtn' >取消</button>
   </div>
 </template>

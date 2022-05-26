@@ -4,6 +4,7 @@ import navBar from './navigationbar/NavigationBar.vue'
 import navOperator from './navigationOperrator/NavigationOperator.vue'
 import navController from './NavigationController.vue'
 import modal from './Modal.vue'
+import {mapGetters} from 'vuex'
 // import { mapGetters } from 'vuex'
 export default {
   name: 'navContainer',
@@ -15,13 +16,13 @@ export default {
     modal
   },
   computed: {
-    isSelectMode () {
-      return this.$store.state.stateType === 1
-    },
-    isImgDeleteMode () {
-      return this.$store.state.stateType === 2
-    }
-    // ...mapGetters(['isSelectMode'])
+    // isSelectMode () {
+    //   return this.$store.state.stateType === 1
+    // },
+    // isImgDeleteMode () {
+    //   return this.$store.state.stateType === 2
+    // }
+    ...mapGetters(['isSelectMode', 'isDeleteMode'])
   },
   methods: {
     clickedTrash () {
@@ -54,7 +55,7 @@ export default {
     <div v-show="isSelectMode">
       <navOperator/>
     </div>
-    <modal v-show="isImgDeleteMode"  @clickedOption="clickedOption" />
+    <modal v-show="isDeleteMode"  @clickedOption="clickedOption" />
   </div>
 </template>
 <style>

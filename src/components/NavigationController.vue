@@ -33,7 +33,7 @@ export default {
         case 0:// 確定
           // this.$emit('deleteAct')
           // this.$refs.container.deleteAction()
-          this.$store.dispatch('deleteImgAction')
+          this.$store.dispatch('deleteAction')
           break
         default:
           this.$store.dispatch('cancleDelete')
