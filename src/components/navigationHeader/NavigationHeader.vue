@@ -1,39 +1,17 @@
 <script>
+import {mapGetters} from 'vuex'
 export default {
   name: 'navHeader',
-  // data () {
-  //   return {
-  //     selectBtnTitle: '選取'
-
-  //   }
-  // },
-  props: {
-    isSelectedMode: {
-      type: Boolean
-    }
-    // totalCounts: {
-    //   type: Number,
-    //   default: 0
-    // }
-  },
   computed: {
-    totalCounts () {
-      return this.$store.getters.totalCounts
-    },
     selectBtnTitle () {
       return this.$store.getters.selectBtnTitle
-    }
+    },
+    ...mapGetters(['totalCountsAndUnit'])
   },
   mounted: function () {
     let recaptchaScript = document.createElement('script')
     recaptchaScript.setAttribute('src', 'https://kit.fontawesome.com/5806ab4e4f.js')
     document.head.appendChild(recaptchaScript)
-  },
-  watch: {
-    // isSelectedMode () {
-    //   //  修改
-    //   this.selectBtnTitle = this.isSelectedMode ? '取消' : '選取'
-    // }
   },
   methods: {
     selectBtnClick () {
@@ -53,7 +31,7 @@ export default {
 <template>
 <div>
     <div>
-      <span id="totalNum">{{totalCounts}}</span>
+      <span id="totalNum">{{totalCountsAndUnit}}</span>
     </div>
     <div class="HeaderRight">
       <button id="selectBtn" @click="selectBtnClick">{{selectBtnTitle}}</button>

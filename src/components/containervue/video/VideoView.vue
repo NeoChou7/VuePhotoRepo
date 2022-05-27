@@ -47,13 +47,14 @@ export default {
   name: 'videoView',
   computed: {
     getVideos () {
-      return this.$store.state.videos
+      return this.$store.state.videostore.videos
     },
     ...mapGetters(['videoRestOfTime'])
   },
   created () {
     this.$store.dispatch('changeNavigationItem', stateType.VideoBrowser)
-    if (!this.$store.state.videos.length) {
+    if (!this.$store.state.videostore.videos.length) {
+      console.log('video load')
       this.$store.dispatch('getVideos', '')
     }
   },

@@ -29,7 +29,7 @@ export default{
       }
       return name
     },
-    ...mapGetters(['imgSelectedCount', 'imgSelectedCountUnit'])
+    ...mapGetters(['selectedCount', 'countUnit'])
   },
   methods: {
     PopTrashDialog () {
@@ -42,7 +42,7 @@ export default{
 </script>
 <template>
   <div class='selectItems'>
-    <span id="selectCount">已選取{{imgSelectedCount}}{{imgSelectedCountUnit}}</span>
+    <span id="selectCount">已選取{{selectedCount}}{{countUnit}}</span>
     <i class="fa-solid fa-cloud-arrow-down export"></i>
     <i id='trashCanBtn' class="fa-solid fa-trash trashcan" @click="PopTrashDialog"></i>
   </div>

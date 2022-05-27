@@ -29,7 +29,6 @@ export default {
       this.$store.dispatch('closeImgFullScreen')
     },
     didShowBrowserDateInfo (imgName, index) {
-      console.log(this.sentinelDate)
       if (index % 3 === 0 && this.sentinelDate !== imgName.substring(0, 8)) {
         this.sentinelDate = imgName.substring(0, 8)
         return true
@@ -192,7 +191,7 @@ export default {
   },
   computed: {
     getImages () {
-      return this.$store.state.images
+      return this.$store.state.librarystore.images
       // return this.$store.getters.getImages
     },
     isShowFullImg () {
@@ -234,7 +233,8 @@ export default {
   },
   created () {
     this.$store.dispatch('changeNavigationItem', stateType.ImgBrowser)
-    if (!this.$store.state.images.length) {
+    if (!this.$store.state.librarystore.images.length) {
+      console.log('library load')
       this.$store.dispatch('getImages', '')
     }
   },
