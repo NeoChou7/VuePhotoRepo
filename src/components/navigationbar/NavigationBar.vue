@@ -7,7 +7,7 @@ export default {
       tabName: [
         { name: '圖庫', iconClass: 'fa-solid fa-images', to: '/Library', stateType: stateType.ImgBrowser },
         { name: '影片', iconClass: 'fa-solid fa-film', to: '/Video', stateType: stateType.VideoBrowser },
-        { name: '相簿', iconClass: 'fa-solid fa-book', to: '/Library' }
+        { name: '相簿', iconClass: 'fa-solid fa-book', to: '/Album', stateType: stateType.AlbumBrowser }
       ]
     }
   },

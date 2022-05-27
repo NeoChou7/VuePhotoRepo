@@ -6,7 +6,8 @@ const stateType = Object.freeze({
   VideoBrowser: 4,
   VideoSelected: 5,
   VideoDelete: 6,
-  VideoFullScreen: 7
+  VideoFullScreen: 7,
+  AlbumBrowser: 8
 })
 
 export default stateType

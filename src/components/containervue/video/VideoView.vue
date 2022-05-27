@@ -57,7 +57,6 @@ export default {
       this.$store.dispatch('getVideos', '')
     }
   },
-  mounted () {},
   methods: {
     // isFullScreen (index) {
     //   console.log(index)

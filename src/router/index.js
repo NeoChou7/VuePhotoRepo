@@ -2,8 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 // import HelloWorld from '@/components/HelloWorld'
 // import navContainer from '@/components/NavigationContainer'
-import libraryView from '@/components/containervue/library/libraryView'
-import videoView from '@/components/containervue/video/videoView'
+import libraryView from '@/components/containervue/library/LibraryView'
+import videoView from '@/components/containervue/video/VideoView'
+import albumView from '@/components/containervue/album/Albumview'
 Vue.use(Router)
 
 export default new Router({
@@ -19,8 +20,8 @@ export default new Router({
   },
   {
     path: '/Album',
-    name: 'albuemView',
-    component: libraryView
+    name: 'albumView',
+    component: albumView
   },
   {
     path: '*',
