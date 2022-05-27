@@ -2,7 +2,7 @@
   <div>
     <div
       v-for="(videos, index) in getVideos"
-      :class="'minDiv'"
+      :class="['minDiv', { 'full-screen': isFullScreen(index) }]"
       :key="videos.name"
       @click="onVideoClick(index)"
     >
@@ -16,7 +16,20 @@
         <source :src="getVideoFullPath(videos.name)" type="video/mp4" />
         <!-- <source src="myVideo.webm" type="video/webm"> -->
       </video>
-      <div class="time-left">{{ videoRestOfTime(index) }}</div>
+      <div v-show="isFullScreen(index)" class='header'>
+        <span>{{videoDateInfo(index)}}</span>
+        <button class='closeIcon' @click.stop="closeFullVideo">X</button>
+      </div>
+      <div v-show="isFullScreen(index)" class='footer'></div>
+      <div v-show="!isFullScreen(index)" class="time-left">{{ videoRestOfTime(index) }}</div>
+      <button v-show="!isFullScreen(index)" :class="'fullscreen-button'" @click.stop="fullVideo(index)">
+        <svg height="100%" version="1.1" viewBox="9 9 18 18" width="100%">
+          <path d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path>
+          <path d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path>
+          <path d="m 24,24 -4,0 0,2 L 26,26 l 0,-6 -2,0 0,4 0,0 z"></path>
+          <path d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path>
+        </svg>
+      </button>
       <div
         v-show="videos.isSelected"
         :class="['minVideo', 'deleteClick']"
@@ -24,19 +37,6 @@
       >
         <div class="tickImg"></div>
       </div>
-      <!-- <img
-        :src="getxsImgFullPath(imgs.name)"
-        :class="'minImg'"
-        :name="imgs.name"
-      />
-      <div
-        v-show="imgs.isSelected"
-        :class="['minImg', 'deleteClick']"
-        mask
-        :name="imgs.name"
-      >
-        <div class="tickImg"></div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -49,17 +49,20 @@ export default {
     getVideos () {
       return this.$store.state.videostore.videos
     },
-    ...mapGetters(['videoRestOfTime'])
+    ...mapGetters(['videoRestOfTime', 'videoDateInfo', 'isFullScreen'])
   },
   created () {
     this.$store.dispatch('changeNavigationItem', stateType.VideoBrowser)
     if (!this.$store.state.videostore.videos.length) {
-      console.log('video load')
       this.$store.dispatch('getVideos', '')
     }
   },
   mounted () {},
   methods: {
+    // isFullScreen (index) {
+    //   console.log(index)
+    //   return this.$store.state.videostore.videos[index].isFullScreen
+    // },
     getVideoFullPath: function (name) {
       return this.$serverHostPath + '/video/' + name
     },
@@ -67,6 +70,7 @@ export default {
       // if imgbrowser 放大
       switch (this.$store.state.stateType) {
         case stateType.VideoBrowser:
+        case stateType.VideoFullScreen:
           this.togglePlay()
           break
         case stateType.VideoSelected:
@@ -89,6 +93,21 @@ export default {
         index: index,
         currentTime: event.target.currentTime
       })
+    },
+    fullVideo (index) {
+      switch (this.$store.state.stateType) {
+        case stateType.VideoBrowser:
+          this.$store.dispatch('setVideoFullScreen', index)
+          break
+        case stateType.VideoSelected:
+          this.$store.dispatch('clickedVideo', index)
+          break
+        default:
+          break
+      }
+    },
+    closeFullVideo () {
+      this.$store.dispatch('closeVideoFullScreen')
     }
   }
 }
@@ -101,6 +120,15 @@ export default {
   display: inline-block;
   margin: 0 0.1em;
 }
+.minDiv.full-screen {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: calc(100vw);
+  height: 100%;
+  z-index: 5;
+  background-color: black;
+}
 .minVideo {
   position: absolute;
   top: 0px;
@@ -108,10 +136,11 @@ export default {
   width: 100%;
   height: 100%;
 }
-.time-left{
+.time-left {
   position: absolute;
   bottom: 0px;
   left: 0px;
+  pointer-events: none;
 }
 .deleteClick {
   backdrop-filter: brightness(50%);
@@ -124,5 +153,35 @@ export default {
   right: 5px;
   background-image: url("~@/assets/tickImg.png");
   background-size: contain;
+}
+
+.fullscreen-button {
+  position: absolute;
+  padding: 0px;
+  border: 0px;
+  width: 15%;
+  height: 15%;
+  bottom: 5px;
+  right: 5px;
+}
+video~.header{
+  position: absolute;
+  height:3rem;
+  width:100%;
+  background-color: white;
+  z-index: 5;
+}
+video~.footer{
+height:3rem;
+width:100%;
+background-color: white;
+z-index: 5;
+position: absolute;
+}
+.header .closeIcon {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
 }
 </style>

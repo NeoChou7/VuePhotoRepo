@@ -154,7 +154,6 @@ export default new Vuex.Store({
           break
       }
       fetchWS.wsDeleteImages(deleteItems).then((data) => {
-        console.log(context.state.stateType)
         switch (context.state.stateType) {
           case stateType.ImgDelete:
             context.commit('deleteSelectedImg')
@@ -187,7 +186,7 @@ export default new Vuex.Store({
       switch (context.state.stateType) {
         case 0 :
         case 1:
-          let lastFileName = context.state.images[context.state.librarystore.images.length - 1].name
+          let lastFileName = context.state.librarystore.images[context.state.librarystore.images.length - 1].name
           context.dispatch('getImages', lastFileName)
           break
         default:

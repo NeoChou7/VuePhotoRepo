@@ -204,7 +204,7 @@ export default {
       'currentFullImgSrc',
       'preFullImgSrc',
       'nextFullImgSrc'
-    ]),
+    ])
     // getPreFullImgPath () {
     //   if (this.fullImgIndex - 1 < 0) return ''
     //   return (
@@ -222,19 +222,18 @@ export default {
     //   let name = this.imgNames[this.fullImgIndex]
     //   return this.convertYYYYMMDDHHMMtoDate(name)
     // },
-    updateDate () {
-      if (this.$el === undefined) return this.scrollLocation
-      if (this.imgNames === undefined || this.imgNames.length === 0) return ''
-      let location = this.scrollLocation / this.$el.offsetHeight
-      let index = Math.ceil(this.imgNames.length * location)
-      let name = this.imgNames[index]
-      return this.convertYYYYMMDDHHMMtoDate(name)
-    }
+    // updateDate () {
+    //   if (this.$el === undefined) return this.scrollLocation
+    //   if (this.imgNames === undefined || this.imgNames.length === 0) return ''
+    //   let location = this.scrollLocation / this.$el.offsetHeight
+    //   let index = Math.ceil(this.imgNames.length * location)
+    //   let name = this.imgNames[index]
+    //   return this.convertYYYYMMDDHHMMtoDate(name)
+    // }
   },
   created () {
     this.$store.dispatch('changeNavigationItem', stateType.ImgBrowser)
     if (!this.$store.state.librarystore.images.length) {
-      console.log('library load')
       this.$store.dispatch('getImages', '')
     }
   },
@@ -277,9 +276,6 @@ export default {
       </div>
     </div>
     <div class="scrollDate">
-      <!-- <div>
-        <span>{{updateDate}}</span>
-      </div> -->
     </div>
     <div class="intervalBar">
       <span>年</span>
