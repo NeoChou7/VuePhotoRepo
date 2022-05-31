@@ -4,6 +4,7 @@ import navBar from './navigationbar/NavigationBar.vue'
 import navOperator from './navigationOperrator/NavigationOperator.vue'
 import navController from './NavigationController.vue'
 import modal from './Modal.vue'
+import fullScreenImg from './fullScreenImg/FullScreenImg.vue'
 import {mapGetters} from 'vuex'
 // import { mapGetters } from 'vuex'
 export default {
@@ -13,7 +14,8 @@ export default {
     navHeader,
     navBar,
     navOperator,
-    modal
+    modal,
+    fullScreenImg
   },
   computed: {
     // isSelectMode () {
@@ -56,6 +58,8 @@ export default {
       <navOperator/>
     </div>
     <modal v-show="isDeleteMode"  @clickedOption="clickedOption" />
+
+    <fullScreenImg/>
   </div>
 </template>
 <style>

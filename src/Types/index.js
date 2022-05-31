@@ -1,4 +1,4 @@
-const stateType = Object.freeze({
+export const stateType = Object.freeze({
   ImgBrowser: 0,
   ImgSelected: 1,
   ImgDelete: 2,
@@ -10,4 +10,14 @@ const stateType = Object.freeze({
   AlbumBrowser: 8
 })
 
-export default stateType
+export const moveDirection = Object.freeze({
+  NONE: 0,
+  Right: 1,
+  Left: 2
+})
+
+export const pageDirection = Object.freeze({
+  NONE: 0,
+  PrePage: 1,
+  NextPage: 2
+})

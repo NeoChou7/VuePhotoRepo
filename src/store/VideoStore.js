@@ -1,6 +1,6 @@
 
 import fetchWS from '../fetchWS'
-import stateType from '../Types'
+import {stateType} from '@/Types'
 import DateFormat from '@/utility/DateFormat'
 let defaultVideo = {
   name: '', isSelected: false, duration: 0, currentTime: 0, isFullScreen: false

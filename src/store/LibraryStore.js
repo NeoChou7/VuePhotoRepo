@@ -1,4 +1,4 @@
-import stateType from '../Types'
+import {stateType, pageDirection} from '@/Types'
 import DateFormat from '@/utility/DateFormat'
 import fetchWS from '../fetchWS'
 export default{
@@ -58,6 +58,12 @@ export default{
     },
     changeFullScreenImgIndex (state, index) {
       state.fullScreenImgIndex = index
+    },
+    pagePreView (state) {
+      state.fullScreenImgIndex = state.fullScreenImgIndex - 1
+    },
+    pageNextView (state) {
+      state.fullScreenImgIndex = state.fullScreenImgIndex + 1
     }
   },
   actions: {
@@ -82,6 +88,18 @@ export default{
     },
     closeImgFullScreen (context) {
       context.commit('changeStateType', stateType.ImgBrowser)
+    },
+    pageImgFullScreen (context, pageDir) {
+      switch (pageDir) {
+        case pageDirection.PrePage:
+          context.commit('pagePreView')
+          break
+        case pageDirection.NextPage:
+          context.commit('pageNextView')
+          break
+        default:
+          break
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import fetchWS from '../fetchWS'
-import stateType from '../Types'
+import {stateType} from '@/Types'
 import librarystore from './LibraryStore'
 import videostore from './VideoStore'
 Vue.use(Vuex)

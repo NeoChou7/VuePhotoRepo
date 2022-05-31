@@ -1,6 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import stateType from '@/Types'
+import {stateType} from '@/Types'
 export default {
   name: 'navHeader',
   computed: {

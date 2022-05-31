@@ -44,7 +44,7 @@
   </div>
 </template>
 <script>
-import stateType from '@/Types'
+import {stateType} from '@/Types'
 import { mapGetters } from 'vuex'
 export default {
   name: 'videoView',

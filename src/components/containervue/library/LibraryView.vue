@@ -1,9 +1,7 @@
 <script>
 // import fetchWS from '@/fetchWS.js'
 import modal from '../../Modal.vue'
-import { mapGetters } from 'vuex'
-import stateType from '@/Types'
-
+import {stateType} from '@/Types'
 export default {
   name: 'libraryView',
   sentinelDate: '',
@@ -25,9 +23,6 @@ export default {
           break
       }
     },
-    closeFullImg () {
-      this.$store.dispatch('closeImgFullScreen')
-    },
     didShowBrowserDateInfo (imgName, index) {
       if (index % 3 === 0 && this.sentinelDate !== imgName.substring(0, 8)) {
         this.sentinelDate = imgName.substring(0, 8)
@@ -40,18 +35,7 @@ export default {
     getImages () {
       return this.$store.state.librarystore.images
       // return this.$store.getters.getImages
-    },
-    isShowFullImg () {
-      return this.$store.state.stateType === stateType.ImgFullScreen
-    },
-    ...mapGetters([
-      'imgDateInfo',
-      'imgCurrentPage',
-      'totalCounts',
-      'currentFullImgSrc',
-      'preFullImgSrc',
-      'nextFullImgSrc'
-    ])
+    }
   },
   created () {
     this.$store.dispatch('changeNavigationItem', stateType.ImgBrowser)
@@ -96,33 +80,7 @@ export default {
       <span>所有照片</span>
     </div>
     <!-- fullscreen -->
-    <div v-show="isShowFullImg" :class="['fullscreen', 'fullImg']">
-      <div class="fullImgHeader">
-        <span id="fullImgTitle">{{ imgCurrentPage }}/{{ totalCounts }}</span
-        ><button
-          class="closeIcon"
-          @click.prevent="closeFullImg"
-          @touched.prevent="closeFullImg"
-        >
-          X
-        </button>
-      </div>
-      <div class="fullImgContent" ><!--@touchend.prevent="detectTouchEnd()"-->
-        <!-- <div id="imgContainer" ref="imgContainer"></div> -->
-        <div>
-          <div>
-            <img :src="preFullImgSrc" />
-          </div>
-          <div>
-            <img :src="currentFullImgSrc" />
-          </div>
-          <div>
-            <img :src="nextFullImgSrc" />
-          </div>
-        </div>
-      </div>
-      <div class="fullImgFooter">{{ imgDateInfo }}</div>
-    </div>
+
   </div>
 </template>
 <style scoped>
@@ -152,77 +110,7 @@ export default {
   background-image: url("~@/assets/tickImg.png");
   background-size: contain;
 }
-.fullscreen {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100vw;
-  height: 100vh;
-}
-.fullImg {
-  z-index: 3;
-  background-color: black;
-}
-.fullImgHeader {
-  position: absolute;
-  top:0px;
-  width:100vw;
-  height: 3rem;
-  color: white;
-  text-align: center;
-  line-height: 3rem;
-}
-.fullImgHeader .closeIcon {
-  position: absolute;
-  right: 5%;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.fullImgContent {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  height: calc(100%);
-  width: calc(100%);
 
-  overflow: scroll;
-  overflow-y: hidden;
-}
-.fullImgContent::-webkit-scrollbar {
-  width: 0;
-  background-color: transparent;
-}
-.fullImgContent > div {
-  height: calc(100%);
-
-  display: flex;
-  width: calc(3 * 100%);
-  border: 5px blue solid;
-}
-.fullImgContent > div > div {
-  /* height: calc(100% - 6rem); */
-
-  flex: 1;
-  width: calc(100vw);
-  border: 5px red solid;
-}
-.fullImgContent img {
-  position: relative;
-  max-width: 100%;
-  max-height: 100%;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-.fullImgFooter {
-  position: absolute;
-  bottom:0px;
-  width:100vw;
-  height: 3rem;
-  color: white;
-  text-align: center;
-  line-height: 3rem;
-}
 .scrollDate {
   position: absolute;
   top: calc(3rem + 10px);

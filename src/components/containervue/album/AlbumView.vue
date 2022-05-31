@@ -2,7 +2,7 @@
 <div></div>
 </template>
 <script>
-import stateType from '@/Types'
+import {stateType} from '@/Types'
 export default {
   name: 'albumView',
   created () {
