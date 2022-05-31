@@ -3,20 +3,20 @@ import fetchWS from '../fetchWS'
 import stateType from '../Types'
 import DateFormat from '@/utility/DateFormat'
 let defaultVideo = {
-  name: '', isSelected: false, currentTime: 0, duration: 0, isFullScreen: false
+  name: '', isSelected: false, duration: 0, currentTime: 0, isFullScreen: false
 }
 export default{
   state: {
-    videos: []
+    videos: [],
+    videoNode: null
   },
   getters: {
     videoDuration: (state) => index => {
+      console.log('getter videoDuration ' + index)
       return state.videos[index].duration
     },
     videoRestOfTime: (state) => index => {
-      //   let totalTime = Math.ceil(state.videos[index].duration)
-      //   let currentT = Math.ceil(state.videos[index].currentTime)
-      //   let restOfTime = Math.round(totalTime - currentT)
+      console.log('getter videoRestOfTime ' + index)
       let totalTime = state.videos[index].duration
       let currentT = state.videos[index].currentTime
       let restOfTime = totalTime - currentT
@@ -25,10 +25,11 @@ export default{
       return time
     },
     isFullScreen: (state) => index => {
-      console.log(index)
+      console.log('getter isFullScreen ' + index)
       return state.videos[index].isFullScreen
     },
     videoDateInfo: (state) => index => {
+      console.log('getter videoDateInfo ' + index)
       if (!state.videos.length) return ''
       let name = state.videos[index].name
       return DateFormat.convertYYYYMMDDHHMMtoDate(name)
@@ -57,20 +58,31 @@ export default{
       }
     },
     setDuration (state, {index, duration}) {
+      console.log('setDuration ' + index)
       state.videos[index].duration = duration
     },
     setCurrentTime (state, {index, currentTime}) {
+      console.log('setCurrentTime')
       state.videos[index].currentTime = currentTime
     },
     deleteSelectedVideo (state) {
       state.videos = state.videos.filter(item => !item.isSelected)
     },
     setVideoFullScreen (state, index) {
+      console.log('setVideoFullScreen')
       state.videos.forEach(ele => { ele.isFullScreen = false })
       state.videos[index].isFullScreen = true
     },
     cancelFullScreen (state) {
       state.videos.forEach(ele => { ele.isFullScreen = false })
+    },
+    setVideoNode (state, node) {
+      if (state.videoNode.node === node) {
+        state.videoNode.isPlay = !state.videoNode.isPlay
+      } else {
+        state.videoNode.node = node
+        state.videoNode.isPlay = true
+      }
     }
   },
   actions: {
@@ -92,7 +104,7 @@ export default{
     setVideoCurrentTime (context, payload) {
       context.commit('setCurrentTime', payload)
     },
-    clickedVideo (context, index) {
+    selectedVideo (context, index) {
       context.state.videos[index].isSelected = !context.state.videos[index].isSelected
     },
     setVideoFullScreen (context, index) {
@@ -102,6 +114,9 @@ export default{
     closeVideoFullScreen (context) {
       context.commit('cancelFullScreen')
       context.commit('changeStateType', stateType.VideoBrowser)
+    },
+    clickedVideo (context, node) {
+      context.commit('setVideoNode', node)
     }
   }
 

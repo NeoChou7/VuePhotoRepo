@@ -16,12 +16,14 @@
         <source :src="getVideoFullPath(videos.name)" type="video/mp4" />
         <!-- <source src="myVideo.webm" type="video/webm"> -->
       </video>
+      <!-- fullscreen -->
       <div v-show="isFullScreen(index)" class='header'>
         <span>{{videoDateInfo(index)}}</span>
         <button class='closeIcon' @click.stop="closeFullVideo">X</button>
       </div>
       <div v-show="isFullScreen(index)" class='footer'></div>
       <div v-show="!isFullScreen(index)" class="time-left">{{ videoRestOfTime(index) }}</div>
+      <!-- bottom -->
       <button v-show="!isFullScreen(index)" :class="'fullscreen-button'" @click.stop="fullVideo(index)">
         <svg height="100%" version="1.1" viewBox="9 9 18 18" width="100%">
           <path d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path>
@@ -30,6 +32,7 @@
           <path d="M 12,20 10,20 10,26 l 6,0 0,-2 -4,0 0,-4 0,0 z"></path>
         </svg>
       </button>
+      <!-- selectedImg -->
       <div
         v-show="videos.isSelected"
         :class="['minVideo', 'deleteClick']"
@@ -45,6 +48,11 @@ import stateType from '@/Types'
 import { mapGetters } from 'vuex'
 export default {
   name: 'videoView',
+  data () {
+    return {
+      playElement: null
+    }
+  },
   computed: {
     getVideos () {
       return this.$store.state.videostore.videos
@@ -57,29 +65,63 @@ export default {
       this.$store.dispatch('getVideos', '')
     }
   },
+  watch: {
+    // '$store.state.videostore.videoNode': {
+    //   handler (newVal, oldVal) {
+    //     console.log(newVal.node.currentSrc + ' ' + newVal.isPlay)
+    //     console.log(oldVal.node.currentSrc + ' ' + oldVal.isPlay)
+    //     // if (oldVal) {
+    //     //   oldVal.pause()
+    //     // }
+    //     // newVal.play()
+    //   },
+    //   deep: true
+    // }
+    // '$store.state.videostore.videoNode.isPlay': {
+    //   handler (newVal, oldVal) {
+    //     console.log(newVal)
+    //     console.log(oldVal)
+    //   },
+    //   deep: true
+    // }
+
+    // videoNode (newVal, oldVal) { // plan1.0
+    //   console.log(oldVal.node)
+    //   console.log(newVal.node)
+    //   console.log(newVal === oldVal)
+    //   if (oldVal.node) {
+    //     oldVal.node.pause()
+    //   }
+    //   // if (newVal !== oldVal) {
+    //   //   newVal.play()
+    //   // }
+    //   newVal.node[newVal.isPlay ? 'play' : 'pause']()
+    //   // newVal[newVal.paused ? 'play' : 'pause']()
+    // }
+  },
   methods: {
-    // isFullScreen (index) {
-    //   console.log(index)
-    //   return this.$store.state.videostore.videos[index].isFullScreen
-    // },
     getVideoFullPath: function (name) {
       return this.$serverHostPath + '/video/' + name
     },
     onVideoClick (index) {
-      // if imgbrowser 放大
       switch (this.$store.state.stateType) {
         case stateType.VideoBrowser:
         case stateType.VideoFullScreen:
           this.togglePlay()
           break
         case stateType.VideoSelected:
-          this.$store.dispatch('clickedVideo', index)
+          this.$store.dispatch('selectedVideo', index)
           break
       }
     },
     togglePlay () {
       let element = event.target
+      // this.$store.dispatch('clickedVideo', element)
+      if (this.playElement && element !== this.playElement) {
+        this.playElement.pause()
+      }
       element[element.paused ? 'play' : 'pause']()
+      this.playElement = element
     },
     setVideoMetaData (index) {
       this.$store.dispatch('setVideoMetaData', {
@@ -99,7 +141,7 @@ export default {
           this.$store.dispatch('setVideoFullScreen', index)
           break
         case stateType.VideoSelected:
-          this.$store.dispatch('clickedVideo', index)
+          this.$store.dispatch('selectedVideo', index)
           break
         default:
           break

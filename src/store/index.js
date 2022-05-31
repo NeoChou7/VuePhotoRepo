@@ -5,11 +5,6 @@ import stateType from '../Types'
 import librarystore from './LibraryStore'
 import videostore from './VideoStore'
 Vue.use(Vuex)
-// stateType
-// 0:Imag browser
-// 1: img selected
-// 2: img delete
-// 3: img fullScreen
 
 export default new Vuex.Store({
   modules: {
@@ -111,10 +106,10 @@ export default new Vuex.Store({
           context.commit('changeStateType', context.state.stateType === stateType.VideoBrowser ? stateType.VideoSelected : stateType.VideoBrowser)
           break
       }
-      if (context.state.stateType === stateType.ImgBrowser || context.state.stateType === stateType.VideoBrowser) {
-        // 取消選取
-        context.commit('clearSelected')
-      }
+      // if (context.state.stateType === stateType.ImgBrowser || context.state.stateType === stateType.VideoBrowser) {
+      //   // 取消選取
+      //   context.commit('clearSelected')
+      // }
     },
     clickedDeleteBtn (context) {
       switch (context.state.stateType) {

@@ -33,4 +33,5 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 bug
 1. 影片使用資料驅動，由於播放進度會一直修改videos資料，導致使用到video的資料一直刷新畫面
-2. 可以同時播放多部影片
+2. [X]可以同時播放多部影片(已改為事件驅動，暫停上一部，播放這一部)
+3. 放大無法啟動播放影片
