@@ -1,195 +1,240 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import fetchWS from '../fetchWS'
-import {stateType} from '@/Types'
-import librarystore from './LibraryStore'
-import videostore from './VideoStore'
-Vue.use(Vuex)
+import Vue from "vue";
+import Vuex from "vuex";
+import fetchWS from "../fetchWS";
+import { stateType } from "@/Types";
+import librarystore from "./LibraryStore";
+import videostore from "./VideoStore";
+import albumstore from "./AlbumStore";
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
-    librarystore, videostore
+    librarystore,
+    videostore,
+    albumstore
   },
   state: {
     stateType: stateType.ImgBrowser
   },
   getters: {
     // getImages: (state) => { return state.images }
-    totalCountsAndUnit (state, getters) {
-      return getters.totalCounts + getters.countUnit
+    totalCountsAndUnit(state, getters) {
+      return getters.totalCounts + getters.countUnit;
     },
-    totalCounts (state) {
+    totalCounts(state) {
       switch (state.stateType) {
         case stateType.ImgBrowser:
         case stateType.ImgSelected:
         case stateType.ImgFullScreen:
-          return state.librarystore.images.length
+          return state.librarystore.images.length;
         case stateType.VideoBrowser:
         case stateType.VideoSelected:
-          return state.videostore.videos.length
+          return state.videostore.videos.length;
         default:
-          return 0
+          return 0;
       }
     },
-    countUnit (state) {
+    countUnit(state) {
       switch (state.stateType) {
         case stateType.ImgBrowser:
         case stateType.ImgSelected:
         case stateType.ImgFullScreen:
-          return '張照片'
+          return "張照片";
         case stateType.VideoSelected:
         case stateType.VideoBrowser:
-          return '支影片'
+          return "支影片";
         default:
-          return ''
+          return "";
       }
     },
-    selectBtnTitle (state) {
+    selectBtnTitle(state) {
       switch (state.stateType) {
         case stateType.ImgBrowser:
         case stateType.VideoBrowser:
-          return '選取'
+          return "選取";
         case stateType.ImgSelected:
         case stateType.VideoSelected:
-          return '取消'
+          return "取消";
         default:
-          return '選取'
+          return "選取";
       }
     },
-    isSelectMode (state) {
+    isSelectMode(state) {
       switch (state.stateType) {
         case stateType.ImgSelected:
         case stateType.VideoSelected:
-          return true
+          return true;
         default:
-          return false
+          return false;
       }
     },
-    isDeleteMode (state) {
+    isDeleteMode(state) {
       switch (state.stateType) {
         case stateType.ImgDelete:
         case stateType.VideoDelete:
-          return true
+          return true;
         default:
-          return false
+          return false;
       }
     },
-    selectedCount (state) {
+    selectedCount(state) {
       switch (state.stateType) {
         case stateType.ImgSelected:
-          return state.librarystore.images.filter(item => item.isSelected).length
+          return state.librarystore.images.filter(item => item.isSelected)
+            .length;
         case stateType.VideoSelected:
-          return state.videostore.videos.filter(item => item.isSelected).length
+          return state.videostore.videos.filter(item => item.isSelected).length;
         default:
-          return 0
+          return 0;
+      }
+    },
+    isAlbumView(state) {
+      switch (state.stateType) {
+        case stateType.AlbumBrowser:
+        case stateType.AlbumCreate:
+          return true;
+        default:
+          return false;
+      }
+    },
+    isAlbumCreate(state) {
+      switch (state.stateType) {
+        case stateType.AlbumCreate:
+          return true;
+        default:
+          return false;
       }
     }
   },
   mutations: {
-    changeStateType (state, type) {
-      state.stateType = type
+    changeStateType(state, type) {
+      state.stateType = type;
     },
-    clearSelected (state) {
-      state.librarystore.images.forEach(img => { img.isSelected = false })
-      state.videostore.videos.forEach(video => { video.isSelected = false })
+    clearSelected(state) {
+      state.librarystore.images.forEach(img => {
+        img.isSelected = false;
+      });
+      state.videostore.videos.forEach(video => {
+        video.isSelected = false;
+      });
     }
   },
   actions: {
-    clickSelectBtn (context) {
+    clickSelectBtn(context) {
       switch (context.state.stateType) {
         case stateType.ImgBrowser:
         case stateType.ImgSelected:
-          context.commit('changeStateType', context.state.stateType === stateType.ImgBrowser ? stateType.ImgSelected : stateType.ImgBrowser)
-          break
+          context.commit(
+            "changeStateType",
+            context.state.stateType === stateType.ImgBrowser
+              ? stateType.ImgSelected
+              : stateType.ImgBrowser
+          );
+          break;
         case stateType.VideoBrowser:
         case stateType.VideoSelected:
-          context.commit('changeStateType', context.state.stateType === stateType.VideoBrowser ? stateType.VideoSelected : stateType.VideoBrowser)
-          break
+          context.commit(
+            "changeStateType",
+            context.state.stateType === stateType.VideoBrowser
+              ? stateType.VideoSelected
+              : stateType.VideoBrowser
+          );
+          break;
       }
       // if (context.state.stateType === stateType.ImgBrowser || context.state.stateType === stateType.VideoBrowser) {
       //   // 取消選取
       //   context.commit('clearSelected')
       // }
     },
-    clickedDeleteBtn (context) {
+    clickedDeleteBtn(context) {
       switch (context.state.stateType) {
         case stateType.ImgSelected:
-          context.commit('changeStateType', stateType.ImgDelete)
-          break
+          context.commit("changeStateType", stateType.ImgDelete);
+          break;
         case stateType.VideoSelected:
-          context.commit('changeStateType', stateType.VideoDelete)
-          break
+          context.commit("changeStateType", stateType.VideoDelete);
+          break;
         default:
-          break
+          break;
       }
     },
-    cancleDelete (context) {
+    cancleDelete(context) {
       switch (context.state.stateType) {
         case stateType.ImgDelete:
-          context.commit('changeStateType', stateType.ImgSelected)
-          break
+          context.commit("changeStateType", stateType.ImgSelected);
+          break;
         case stateType.VideoDelete:
-          context.commit('changeStateType', stateType.VideoSelected)
-          break
+          context.commit("changeStateType", stateType.VideoSelected);
+          break;
         default:
-          break
+          break;
       }
     },
-    deleteAction (context) {
+    deleteAction(context) {
       // ws刪除
-      let deleteItems = []
+      let deleteItems = [];
       switch (context.state.stateType) {
         case stateType.ImgDelete:
-          deleteItems = context.state.librarystore.images.filter(ele => ele.isSelected).map(ele => ele.name)
-          break
+          deleteItems = context.state.librarystore.images
+            .filter(ele => ele.isSelected)
+            .map(ele => ele.name);
+          break;
         case stateType.VideoDelete:
-          deleteItems = context.state.videostore.videos.filter(ele => ele.isSelected).map(ele => ele.name)
-          break
+          deleteItems = context.state.videostore.videos
+            .filter(ele => ele.isSelected)
+            .map(ele => ele.name);
+          break;
         default:
-          break
+          break;
       }
-      fetchWS.wsDeleteImages(deleteItems).then((data) => {
-        switch (context.state.stateType) {
-          case stateType.ImgDelete:
-            context.commit('deleteSelectedImg')
-            context.commit('changeStateType', stateType.ImgSelected)
-            break
-          case stateType.VideoDelete:
-            context.commit('deleteSelectedVideo')
-            context.commit('changeStateType', stateType.VideoSelected)
-            break
-          default:
-            break
-        }
-      }).catch((err) => console.log('err', err))
+      fetchWS
+        .wsDeleteImages(deleteItems)
+        .then(data => {
+          switch (context.state.stateType) {
+            case stateType.ImgDelete:
+              context.commit("deleteSelectedImg");
+              context.commit("changeStateType", stateType.ImgSelected);
+              break;
+            case stateType.VideoDelete:
+              context.commit("deleteSelectedVideo");
+              context.commit("changeStateType", stateType.VideoSelected);
+              break;
+            default:
+              break;
+          }
+        })
+        .catch(err => console.log("err", err));
     },
-    upload (context, payload) {
+    upload(context, payload) {
       switch (context.state.stateType) {
         case stateType.ImgBrowser:
         case stateType.ImgSelected:
-          context.dispatch('uploadImages', payload)
-          break
+          context.dispatch("uploadImages", payload);
+          break;
         case stateType.VideoBrowser:
         case stateType.VideoSelected:
-          context.dispatch('uploadVideos', payload)
-          break
+          context.dispatch("uploadVideos", payload);
+          break;
         default:
-          break
+          break;
       }
     },
-    loadMore (context) {
+    loadMore(context) {
       switch (context.state.stateType) {
-        case 0 :
+        case 0:
         case 1:
-          let lastFileName = context.state.librarystore.images[context.state.librarystore.images.length - 1].name
-          context.dispatch('getImages', lastFileName)
-          break
+          let lastFileName =
+            context.state.librarystore.images[
+              context.state.librarystore.images.length - 1
+            ].name;
+          context.dispatch("getImages", lastFileName);
+          break;
         default:
-          break
+          break;
       }
     },
-    changeNavigationItem (context, type) {
-      context.commit('changeStateType', type)
+    changeNavigationItem(context, type) {
+      context.commit("changeStateType", type);
     }
   }
-})
+});

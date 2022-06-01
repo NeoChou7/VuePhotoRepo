@@ -7,17 +7,18 @@ export const stateType = Object.freeze({
   VideoSelected: 5,
   VideoDelete: 6,
   VideoFullScreen: 7,
-  AlbumBrowser: 8
-})
+  AlbumBrowser: 8,
+  AlbumCreate: 9
+});
 
 export const moveDirection = Object.freeze({
   NONE: 0,
   Right: 1,
   Left: 2
-})
+});
 
 export const pageDirection = Object.freeze({
   NONE: 0,
   PrePage: 1,
   NextPage: 2
-})
+});

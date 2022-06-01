@@ -1,26 +1,25 @@
-import env from '../config/env'
+import env from "../config/env";
 
-const serverHostPath = env.serverHostPath
-function wsGetImages (fromName) {
-  const imagesPath =
-      serverHostPath + '/images?fromName=' + (fromName || '')
-  return fetch(imagesPath).then(function (response) {
-    return response.json()
-  })
+const serverHostPath = env.serverHostPath;
+function wsGetImages(fromName) {
+  const imagesPath = serverHostPath + "/images?fromName=" + (fromName || "");
+  return fetch(imagesPath).then(function(response) {
+    return response.json();
+  });
 }
 
-function wsDeleteImages (names) {
-  const deletePath = serverHostPath + '/delete'
+function wsDeleteImages(names) {
+  const deletePath = serverHostPath + "/delete";
 
   return fetch(deletePath, {
     headers: {
-      'content-type': 'application/json'
+      "content-type": "application/json"
     },
-    method: 'DELETE',
+    method: "DELETE",
     body: JSON.stringify(names)
-  }).then(function (response) {
-    return response.json()
-  })
+  }).then(function(response) {
+    return response.json();
+  });
 }
 
 // function wsGetImage (imgName) {
@@ -61,42 +60,61 @@ function wsDeleteImages (names) {
 //   return window.btoa(binary)
 // }
 
-function wsFileUpload (files) {
-  var data = new FormData()
-  Array.from(files).forEach((name) => data.append('files', name))
+function wsFileUpload(files) {
+  var data = new FormData();
+  Array.from(files).forEach(name => data.append("files", name));
   // data.append("files", file);
-  const uploadPath = serverHostPath + '/upload'
+  const uploadPath = serverHostPath + "/upload";
   return fetch(uploadPath, {
-    method: 'POST',
+    method: "POST",
     body: data
-  }).then(function (response) {
-    return response.json()
-  })
+  }).then(function(response) {
+    return response.json();
+  });
 }
 
 // ==========================================
-function wsGetVideos (fromName) {
-  const imagesPath =
-      serverHostPath + '/videos?fromName=' + (fromName || '')
-  return fetch(imagesPath).then(function (response) {
-    return response.json()
-  })
+function wsGetVideos(fromName) {
+  const imagesPath = serverHostPath + "/videos?fromName=" + (fromName || "");
+  return fetch(imagesPath).then(function(response) {
+    return response.json();
+  });
 }
 
-function wsDeleteVideos (names) {
-  const deletePath = serverHostPath + '/delete'
+function wsDeleteVideos(names) {
+  const deletePath = serverHostPath + "/delete";
 
   return fetch(deletePath, {
     headers: {
-      'content-type': 'application/json'
+      "content-type": "application/json"
     },
-    method: 'DELETE',
+    method: "DELETE",
     body: JSON.stringify(names)
-  }).then(function (response) {
-    return response.json()
-  })
+  }).then(function(response) {
+    return response.json();
+  });
 }
 
+// ==========================================
+function wsAddAlbum(filename) {
+  let data = { name: filename };
+
+  const addAlbumPath = serverHostPath + "/album";
+  return fetch(addAlbumPath, {
+    method: "POST",
+    body: JSON.stringify(data)
+  }).then(function(response) {
+    return response.json();
+  });
+}
+
+function wsGetAlbums(fromName) {
+  const albumPath = serverHostPath + "/albums";
+  return fetch(albumPath).then(function(response) {
+    return response.json();
+  });
+}
+// ==========================================
 // function wsGetVideo (videoName) {
 //   const videoPath = serverHostPath + '/Video/' + videoName
 //   return fetch(videoPath)
@@ -111,4 +129,12 @@ function wsDeleteVideos (names) {
 //       // document.getElementById("img").src = base64Flag + imageStr;
 //     })
 // }
-export default {wsGetImages, wsFileUpload, wsDeleteImages, wsGetVideos, wsDeleteVideos}
+export default {
+  wsGetImages,
+  wsFileUpload,
+  wsDeleteImages,
+  wsGetVideos,
+  wsDeleteVideos,
+  wsAddAlbum,
+  wsGetAlbums
+};

@@ -1,16 +1,12 @@
 <script>
 import { mapGetters } from 'vuex'
-import {stateType} from '@/Types'
 export default {
   name: 'navHeader',
   computed: {
     selectBtnTitle () {
       return this.$store.getters.selectBtnTitle
     },
-    isAlbumView () {
-      return this.$store.state.stateType === stateType.AlbumBrowser
-    },
-    ...mapGetters(['totalCountsAndUnit'])
+    ...mapGetters(['totalCountsAndUnit', 'isAlbumView'])
   },
   mounted: function () {
     let recaptchaScript = document.createElement('script')
@@ -30,6 +26,9 @@ export default {
       let arys = event.target.files
       // 把檔案傳到外層處理
       this.$store.dispatch('upload', arys)
+    },
+    openCreateAlbum () {
+      this.$store.dispatch('openCreateAlbum')
     }
   }
 }
@@ -37,15 +36,15 @@ export default {
 <template>
   <div>
     <div v-if="isAlbumView">
-      <button>刪除</button>
-      <span>xx相簿</span>
-      <button>新增</button>
+      <button class="header-left">刪除</button>
+      <span class="total-num">xx相簿</span>
+      <button class="HeaderRight" @click="openCreateAlbum">新增</button>
     </div>
     <div v-else>
       <div>
-        <span id="totalNum">{{ totalCountsAndUnit }}</span>
+        <span class="total-num">{{ totalCountsAndUnit }}</span>
       </div>
-      <div class="HeaderRight">
+      <div class="header-right">
         <button id="selectBtn" @click="selectBtnClick">
           {{ selectBtnTitle }}
         </button>
@@ -66,12 +65,17 @@ export default {
   </div>
 </template>
 <style scoped>
-.HeaderRight {
+.header-left {
+  position: absolute;
+  left: 5px;
+  height: 100%;
+}
+.header-right {
   position: absolute;
   right: 5px;
   height: 100%;
 }
-#totalNum {
+.total-num {
   position: absolute;
   display: inline-block;
   left: 50%;
