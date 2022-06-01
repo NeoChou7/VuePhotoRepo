@@ -12,19 +12,26 @@
         playsinline
         @loadedmetadata="setVideoMetaData(index)"
         @timeupdate="updateTime(index)"
+        :ref="'video' + index"
       >
         <source :src="getVideoFullPath(videos.name)" type="video/mp4" />
         <!-- <source src="myVideo.webm" type="video/webm"> -->
       </video>
       <!-- fullscreen -->
-      <div v-show="isFullScreen(index)" class='header'>
-        <span>{{videoDateInfo(index)}}</span>
-        <button class='closeIcon' @click.stop="closeFullVideo">X</button>
+      <div v-show="isFullScreen(index)" class="header">
+        <span>{{ videoDateInfo(index) }}</span>
+        <button class="closeIcon" @click.stop="closeFullVideo">X</button>
       </div>
-      <div v-show="isFullScreen(index)" class='footer'></div>
-      <div v-show="!isFullScreen(index)" class="time-left">{{ videoRestOfTime(index) }}</div>
+      <div v-show="isFullScreen(index)" class="footer"></div>
+      <div v-show="!isFullScreen(index)" class="time-left">
+        {{ videoRestOfTime(index) }}
+      </div>
       <!-- bottom -->
-      <button v-show="!isFullScreen(index)" :class="'fullscreen-button'" @click.stop="fullVideo(index)">
+      <button
+        v-show="!isFullScreen(index)"
+        :class="'fullscreen-button'"
+        @click.stop="fullVideo(index)"
+      >
         <svg height="100%" version="1.1" viewBox="9 9 18 18" width="100%">
           <path d="m 10,16 2,0 0,-4 4,0 0,-2 L 10,10 l 0,6 0,0 z"></path>
           <path d="m 20,10 0,2 4,0 0,4 2,0 L 26,10 l -6,0 0,0 z"></path>
@@ -44,7 +51,7 @@
   </div>
 </template>
 <script>
-import {stateType} from '@/Types'
+import { stateType } from '@/Types'
 import { mapGetters } from 'vuex'
 export default {
   name: 'videoView',
@@ -84,7 +91,6 @@ export default {
     //   },
     //   deep: true
     // }
-
     // videoNode (newVal, oldVal) { // plan1.0
     //   console.log(oldVal.node)
     //   console.log(newVal.node)
@@ -139,6 +145,8 @@ export default {
       switch (this.$store.state.stateType) {
         case stateType.VideoBrowser:
           this.$store.dispatch('setVideoFullScreen', index)
+          this.playElement && this.playElement.pause()
+          this.$refs['video' + index][0].play()
           break
         case stateType.VideoSelected:
           this.$store.dispatch('selectedVideo', index)
@@ -192,7 +200,7 @@ export default {
   height: 15%;
   bottom: 5px;
   right: 5px;
-  background-image: url("~@/assets/tickImg.png");
+  background-image: url('~@/assets/tickImg.png');
   background-size: contain;
 }
 
@@ -205,19 +213,19 @@ export default {
   bottom: 5px;
   right: 5px;
 }
-video~.header{
+video ~ .header {
   position: absolute;
-  height:3rem;
-  width:100%;
+  height: 3rem;
+  width: 100%;
   background-color: white;
   z-index: 5;
 }
-video~.footer{
-height:3rem;
-width:100%;
-background-color: white;
-z-index: 5;
-position: absolute;
+video ~ .footer {
+  height: 3rem;
+  width: 100%;
+  background-color: white;
+  z-index: 5;
+  position: absolute;
 }
 .header .closeIcon {
   position: absolute;

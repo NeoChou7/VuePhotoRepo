@@ -1,7 +1,7 @@
-import {stateType, pageDirection} from '@/Types'
+import { stateType, pageDirection } from '@/Types'
 import DateFormat from '@/utility/DateFormat'
 import fetchWS from '../fetchWS'
-export default{
+export default {
   state: {
     images: [],
     fullScreenImgIndex: 0
@@ -35,7 +35,7 @@ export default{
     addImages (state, jsonData) {
       for (var i in jsonData) {
         if (!jsonData.hasOwnProperty(i)) continue
-        state.images.push({name: jsonData[i], isSelected: false})
+        state.images.push({ name: jsonData[i], isSelected: false })
       }
     },
     deleteSelectedImg (state) {
@@ -44,9 +44,9 @@ export default{
     updateImages (state, payload) {
       let limitFilename = state.images[state.images.length - 1].name
       // payload errorFiles , successResults
-      payload.successResults.forEach((element) => {
+      payload.successResults.forEach(element => {
         if (element >= limitFilename) {
-          state.images.push({name: element, isSelected: false})
+          state.images.push({ name: element, isSelected: false })
         }
       })
 
@@ -60,27 +60,35 @@ export default{
       state.fullScreenImgIndex = index
     },
     pagePreView (state) {
-      state.fullScreenImgIndex = state.fullScreenImgIndex - 1
+      if (state.fullScreenImgIndex > 0) {
+        state.fullScreenImgIndex = state.fullScreenImgIndex - 1
+      }
     },
     pageNextView (state) {
-      state.fullScreenImgIndex = state.fullScreenImgIndex + 1
+      if (state.fullScreenImgIndex < state.images.length - 1) {
+        state.fullScreenImgIndex = state.fullScreenImgIndex + 1
+      }
     }
   },
   actions: {
     getImages (context, fromName) {
-      fetchWS.wsGetImages(fromName).then((jsonData) => {
+      fetchWS.wsGetImages(fromName).then(jsonData => {
         context.commit('addImages', jsonData)
       })
     },
     clickedImg (context, index) {
-      context.state.images[index].isSelected = !context.state.images[index].isSelected
+      context.state.images[index].isSelected = !context.state.images[index]
+        .isSelected
     },
     uploadImages (context, imgs) {
-      fetchWS.wsFileUpload(imgs).then(data => {
-        // 通知 Library 新增了哪些圖片檔
-        // this.$refs.container.updateData(data)
-        context.commit('updateImages', data)
-      }).catch((err) => console.log('err', err))
+      fetchWS
+        .wsFileUpload(imgs)
+        .then(data => {
+          // 通知 Library 新增了哪些圖片檔
+          // this.$refs.container.updateData(data)
+          context.commit('updateImages', data)
+        })
+        .catch(err => console.log('err', err))
     },
     openImgFullScreen (context, index) {
       context.commit('changeStateType', stateType.ImgFullScreen)
